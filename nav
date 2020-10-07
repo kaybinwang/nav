@@ -92,8 +92,9 @@ function nav_help() {
 }
 
 function nav_list() {
-  echo "not implemented"
-  exit 1
+  find "$NAV_PATH" -maxdepth 1 -type l \
+    | xargs bash -c 'echo "$(basename "$1") -> $(realpath "$1")"' {} \
+    | sort -n
 }
 
 function nav_to() {
