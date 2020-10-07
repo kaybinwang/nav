@@ -108,8 +108,24 @@ function __nav_cmd_to() {
 }
 
 function __nav_cmd_remove() {
-  echo "not implemented"
-  return 1
+  local -r shortcut="$1"
+  if [[ -z "$shortcut" ]]; then
+    echo "Please provide a shortcut."
+    __nav_print_help_remove
+    return 1
+  fi
+
+  local -r symlink="$NAV_PATH/$shortcut"
+  if [[ ! -e "$symlink" ]]; then
+    echo "$shortcut is not a shortcut."
+    return 1
+  fi
+  if [[ ! -h "$symlink" ]]; then
+    echo "Error: "$symlink" is not a symlink."
+    return 1
+  fi
+
+  rm "$symlink"
 }
 
 function __nav_cmd_update() {
