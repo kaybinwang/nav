@@ -5,5 +5,5 @@ Create shortcuts for navigating to specific directories.
 ```
 $ git clone https://github.com/kaybinwang/nav.git
 $ cd nav
-$ ln -s `realpath nav` /usr/local/bin/nav
+$ echo 'source nav.sh' >> ~/.bash_profile
 ```
