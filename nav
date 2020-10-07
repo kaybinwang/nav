@@ -12,7 +12,8 @@ These are the available commands:
 
     add         Add a new shortcut to a directory
     update      Update an existing shortcut to a different directory
-    list        List all the registered shortcuts
+    remove      Remove an existing shortcut
+    list        List all the shortcuts
     to          Navigate to a directory using the provided shortcut
     help        Output additional information about a specific command
 
@@ -33,6 +34,14 @@ function print_help_update() {
 usage: nav update <shortcut> <directory>
 
 Update an existing shortcut to the provided directory.
+EOM
+}
+
+function print_help_remove() {
+  cat <<EOM
+usage: nav remove <shortcut>
+
+Remove an existing shortcut.
 EOM
 }
 
@@ -65,6 +74,9 @@ function nav_help() {
     update)
       print_help_update ${@:2}
       ;;
+    remove)
+      print_help_remove ${@:2}
+      ;;
     list)
       print_help_list ${@:2}
       ;;
@@ -85,6 +97,16 @@ function nav_list() {
 }
 
 function nav_to() {
+  echo "not implemented"
+  exit 1
+}
+
+function nav_remove() {
+  echo "not implemented"
+  exit 1
+}
+
+function nav_update() {
   echo "not implemented"
   exit 1
 }
@@ -136,7 +158,10 @@ function main() {
       nav_add ${@:2}
       ;;
     update)
-      nav_add ${@:2}
+      nav_update ${@:2}
+      ;;
+    remove)
+      nav_remove ${@:2}
       ;;
     list)
       nav_list ${@:2}
