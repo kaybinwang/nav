@@ -1,3 +1,46 @@
 #!/usr/local/bin/bash
 
-echo "hi"
+function print_help() {
+  cat <<EOM
+usage: nav <command> [<args>]
+
+These are the available commands:
+
+    add         Add a new shortcut to a directory
+    update      Update an existing shortcut to a different directory
+    list        List all the registered shortcuts
+    to          Navigate to a directory using the provided shortcut
+    help        Output additional information about a specific command
+
+See 'nav help <command>' to read about a specific command.
+EOM
+}
+
+function main() {
+  local -r subcommand="$1"
+  if [[ -z "$subcommand" ]]; then
+    print_help
+    exit 1
+  fi
+  case "$subcommand" in
+    list)
+      echo "not implemented"
+      exit 1
+      ;;
+    add)
+      echo "not implemented"
+      exit 1
+      ;;
+    to)
+      echo "not implemented"
+      exit 1
+      ;;
+    *)
+      echo "Unrecognized command: $subcommand."
+      print_help
+      exit 1
+      ;;
+  esac
+}
+
+main $*
