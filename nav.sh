@@ -1,8 +1,8 @@
-#!/usr/local/bin/bash
+if [[ -z NAV_PATH ]]; then
+  NAV_PATH="$HOME/.config/nav"
+fi
 
-declare -r NAV_PATH="$HOME/.config/nav"
-
-function print_help() {
+function __nav_print_help() {
   cat <<EOM
 usage: nav <command> [<args>]
 
@@ -21,7 +21,7 @@ See 'nav help <command>' to read about a specific command.
 EOM
 }
 
-function print_help_add() {
+function __nav_print_help_add() {
   cat <<EOM
 usage: nav add <shortcut> <directory>
 
@@ -29,7 +29,7 @@ Add a new shortcut to the provided directory.
 EOM
 }
 
-function print_help_update() {
+function __nav_print_help_update() {
   cat <<EOM
 usage: nav update <shortcut> <directory>
 
@@ -37,7 +37,7 @@ Update an existing shortcut to the provided directory.
 EOM
 }
 
-function print_help_remove() {
+function __nav_print_help_remove() {
   cat <<EOM
 usage: nav remove <shortcut>
 
@@ -45,7 +45,7 @@ Remove an existing shortcut.
 EOM
 }
 
-function print_help_list() {
+function __nav_print_help_list() {
   cat <<EOM
 usage: nav list
 
@@ -53,7 +53,7 @@ Output all of the shortcuts.
 EOM
 }
 
-function print_help_to() {
+function __nav_print_help_to() {
   cat <<EOM
 usage: nav to <shortcut>
 
@@ -61,63 +61,70 @@ Navigate to the directory under the provided shortcut.
 EOM
 }
 
-function nav_help() {
+function __nav_cmd_help() {
   local -r subcommand="$1"
   if [[ -z "$subcommand" ]]; then
-    print_help
+    __nav_print_help
     exit 1
   fi
   case "$subcommand" in
     add)
-      print_help_add ${@:2}
+      __nav_print_help_add ${@:2}
       ;;
     update)
-      print_help_update ${@:2}
+      __nav_print_help_update ${@:2}
       ;;
     remove)
-      print_help_remove ${@:2}
+      __nav_print_help_remove ${@:2}
       ;;
     list)
-      print_help_list ${@:2}
+      __nav_print_help_list ${@:2}
       ;;
     to)
-      print_help_to ${@:2}
+      __nav_print_help_to ${@:2}
       ;;
     *)
       echo "Unrecognized command: $subcommand."
-      print_help
+      __nav_print_help
       exit 1
       ;;
   esac
 }
 
-function nav_list() {
+function __nav_cmd_list() {
   find "$NAV_PATH" -maxdepth 1 -type l \
     | xargs bash -c 'echo "$(basename "$1") -> $(realpath "$1")"' {} \
     | sort -n
 }
 
-function nav_to() {
+function __nav_cmd_to() {
+  local -r shortcut="$1"
+  if [[ -z "$shortcut" ]]; then
+    echo "Please provide a shortcut."
+    __nav_print_help_to
+    exit 1
+  fi
+
+  echo "$(realpath "$NAV_PATH/$shortcut")"
+  cd "$(realpath "$NAV_PATH/$shortcut")"
+}
+
+function __nav_cmd_remove() {
   echo "not implemented"
   exit 1
 }
 
-function nav_remove() {
+function __nav_cmd_update() {
   echo "not implemented"
   exit 1
 }
 
-function nav_update() {
-  echo "not implemented"
-  exit 1
-}
-
-function nav_add() {
+function __nav_cmd_add() {
   local -r shortcut="$1"
   local -r directory="$2"
-  if [[ -z "$shortcut" ]] || [ -z "$directory" ]; then
+  if [[ -z "$shortcut" ]] || [[ -z "$directory" ]]; then
     echo "Please provide a shortcut and a directory."
-    print_help_add
+    __nav_print_help_add
     exit 1
   fi
 
@@ -148,37 +155,39 @@ function nav_add() {
   echo "Added a shortcut from $shortcut to $src!"
 }
 
-function main() {
+function nav() {
+  if [[ -z "$NAV_PATH" ]]; then
+    echo "Error: NAV_PATH is not set."
+    exit 1
+  fi
   local -r subcommand="$1"
   if [[ -z "$subcommand" ]]; then
-    print_help
+    __nav_print_help
     exit 1
   fi
   case "$subcommand" in
     add)
-      nav_add ${@:2}
+      __nav_cmd_add ${@:2}
       ;;
     update)
-      nav_update ${@:2}
+      __nav_cmd_update ${@:2}
       ;;
     remove)
-      nav_remove ${@:2}
+      __nav_cmd_remove ${@:2}
       ;;
     list)
-      nav_list ${@:2}
+      __nav_cmd_list ${@:2}
       ;;
     to)
-      nav_to ${@:2}
+      __nav_cmd_to ${@:2}
       ;;
     help)
-      nav_help ${@:2}
+      __nav_cmd_help ${@:2}
       ;;
     *)
       echo "Unrecognized command: $subcommand."
-      print_help
+      __nav_print_help
       exit 1
       ;;
   esac
 }
-
-main $@
