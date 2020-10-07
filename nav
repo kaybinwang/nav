@@ -1,8 +1,12 @@
 #!/usr/local/bin/bash
 
+declare -r NAV_PATH="$HOME/.config/nav"
+
 function print_help() {
   cat <<EOM
 usage: nav <command> [<args>]
+
+A tool for managing shortcuts to frequently visited directories.
 
 These are the available commands:
 
@@ -16,24 +20,56 @@ See 'nav help <command>' to read about a specific command.
 EOM
 }
 
-function main() {
+function print_help_add() {
+  cat <<EOM
+usage: nav add <shortcut> <directory>
+
+Add a new shortcut to the provided directory.
+EOM
+}
+
+function print_help_update() {
+  cat <<EOM
+usage: nav update <shortcut> <directory>
+
+Update an existing shortcut to the provided directory.
+EOM
+}
+
+function print_help_list() {
+  cat <<EOM
+usage: nav list
+
+Output all of the shortcuts.
+EOM
+}
+
+function print_help_to() {
+  cat <<EOM
+usage: nav to <shortcut>
+
+Navigate to the directory under the provided shortcut.
+EOM
+}
+
+function nav_help() {
   local -r subcommand="$1"
   if [[ -z "$subcommand" ]]; then
     print_help
     exit 1
   fi
   case "$subcommand" in
-    list)
-      echo "not implemented"
-      exit 1
-      ;;
     add)
-      echo "not implemented"
-      exit 1
+      print_help_add ${@:2}
+      ;;
+    update)
+      print_help_update ${@:2}
+      ;;
+    list)
+      print_help_list ${@:2}
       ;;
     to)
-      echo "not implemented"
-      exit 1
+      print_help_to ${@:2}
       ;;
     *)
       echo "Unrecognized command: $subcommand."
@@ -43,4 +79,49 @@ function main() {
   esac
 }
 
-main $*
+function nav_list() {
+  echo "not implemented"
+  exit 1
+}
+
+function nav_to() {
+  echo "not implemented"
+  exit 1
+}
+
+function nav_add() {
+  echo "not implemented"
+  exit 1
+}
+
+function main() {
+  local -r subcommand="$1"
+  if [[ -z "$subcommand" ]]; then
+    print_help
+    exit 1
+  fi
+  case "$subcommand" in
+    add)
+      nav_add ${@:2}
+      ;;
+    update)
+      nav_add ${@:2}
+      ;;
+    list)
+      nav_list ${@:2}
+      ;;
+    to)
+      nav_to ${@:2}
+      ;;
+    help)
+      nav_help ${@:2}
+      ;;
+    *)
+      echo "Unrecognized command: $subcommand."
+      print_help
+      exit 1
+      ;;
+  esac
+}
+
+main $@
