@@ -1,4 +1,4 @@
-if [[ -z NAV_PATH ]]; then
+if [[ -z "$NAV_PATH" ]]; then
   NAV_PATH="$HOME/.config/nav"
 fi
 
@@ -65,7 +65,7 @@ function __nav_cmd_help() {
   local -r subcommand="$1"
   if [[ -z "$subcommand" ]]; then
     __nav_print_help
-    exit 1
+    return 1
   fi
   case "$subcommand" in
     add)
@@ -86,7 +86,7 @@ function __nav_cmd_help() {
     *)
       echo "Unrecognized command: $subcommand."
       __nav_print_help
-      exit 1
+      return 1
       ;;
   esac
 }
@@ -102,21 +102,19 @@ function __nav_cmd_to() {
   if [[ -z "$shortcut" ]]; then
     echo "Please provide a shortcut."
     __nav_print_help_to
-    exit 1
+    return 1
   fi
-
-  echo "$(realpath "$NAV_PATH/$shortcut")"
   cd "$(realpath "$NAV_PATH/$shortcut")"
 }
 
 function __nav_cmd_remove() {
   echo "not implemented"
-  exit 1
+  return 1
 }
 
 function __nav_cmd_update() {
   echo "not implemented"
-  exit 1
+  return 1
 }
 
 function __nav_cmd_add() {
@@ -125,23 +123,23 @@ function __nav_cmd_add() {
   if [[ -z "$shortcut" ]] || [[ -z "$directory" ]]; then
     echo "Please provide a shortcut and a directory."
     __nav_print_help_add
-    exit 1
+    return 1
   fi
 
   local -r src="$(realpath "$directory")"
   if [[ $? -ne 0 ]]; then
     echo "Error: could not resolve the absolute path for $directory."
-    exit 1
+    return 1
   fi
   if [[ ! -d "$src" ]]; then
     echo "Error: $directory is not a directory."
-    exit 1
+    return 1
   fi
 
   local -r dst="$NAV_PATH/$shortcut"
   if [[ -e "$shortcut" ]]; then
     echo "Error: $shortcut already exists."
-    exit 1
+    return 1
   fi
 
   mkdir -p "$NAV_PATH" &>/dev/null
@@ -150,7 +148,7 @@ function __nav_cmd_add() {
   local -r rv="$?"
   if [[ $rv -ne 0 ]]; then
     echo "Error: unable to add a shortcut from $shortcut to $directory."
-    exit 1
+    return 1
   fi
   echo "Added a shortcut from $shortcut to $src!"
 }
@@ -158,12 +156,12 @@ function __nav_cmd_add() {
 function nav() {
   if [[ -z "$NAV_PATH" ]]; then
     echo "Error: NAV_PATH is not set."
-    exit 1
+    return 1
   fi
   local -r subcommand="$1"
   if [[ -z "$subcommand" ]]; then
     __nav_print_help
-    exit 1
+    return 1
   fi
   case "$subcommand" in
     add)
@@ -187,7 +185,8 @@ function nav() {
     *)
       echo "Unrecognized command: $subcommand."
       __nav_print_help
-      exit 1
+      return 1
       ;;
   esac
+  return "$?"
 }
