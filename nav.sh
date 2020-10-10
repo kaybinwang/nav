@@ -104,7 +104,16 @@ function __nav_cmd_to() {
     __nav_print_help_to
     return 1
   fi
-  cd "$(realpath "$NAV_PATH/$shortcut")"
+  local -r dst="$(realpath "$NAV_PATH/$shortcut")"
+  if [[ ! -e "$dst" ]]; then
+    echo "Shortcut '$shortcut' not found."
+    return 1
+  fi
+  if [[ ! -d "$dst" ]]; then
+    echo "Error: $dst is not a directory."
+    return 1
+  fi
+  cd "$dst"
 }
 
 function __nav_cmd_remove() {
