@@ -98,7 +98,7 @@ __nav_cmd_list() {
     return 0
   fi
   find "$NAV_PATH" -maxdepth 1 -type l | sort -n | while read -r shortcut; do
-    echo "$(basename "$1") -> $(realpath "$1")"
+    echo "$(basename "$shortcut") -> $(realpath "$shortcut")"
   done
 }
 
