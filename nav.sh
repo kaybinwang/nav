@@ -1,10 +1,10 @@
-# shellcheck lang=sh
+# shellcheck shell=sh
 
-if [[ -z "$NAV_PATH" ]]; then
+if [ -z "$NAV_PATH" ]; then
   NAV_PATH="$HOME/.config/nav"
 fi
 
-function __nav_print_help() {
+__nav_print_help() {
   cat <<EOM
 usage: nav <command> [<args>]
 
@@ -23,7 +23,7 @@ See 'nav help <command>' to read about a specific command.
 EOM
 }
 
-function __nav_print_help_add() {
+__nav_print_help_add() {
   cat <<EOM
 usage: nav add <shortcut> <directory>
 
@@ -31,7 +31,7 @@ Add a new shortcut to the provided directory.
 EOM
 }
 
-function __nav_print_help_update() {
+__nav_print_help_update() {
   cat <<EOM
 usage: nav update <shortcut> <directory>
 
@@ -39,7 +39,7 @@ Update an existing shortcut to the provided directory.
 EOM
 }
 
-function __nav_print_help_remove() {
+__nav_print_help_remove() {
   cat <<EOM
 usage: nav remove <shortcut>
 
@@ -47,7 +47,7 @@ Remove an existing shortcut.
 EOM
 }
 
-function __nav_print_help_list() {
+__nav_print_help_list() {
   cat <<EOM
 usage: nav list
 
@@ -55,7 +55,7 @@ Output all of the shortcuts.
 EOM
 }
 
-function __nav_print_help_to() {
+__nav_print_help_to() {
   cat <<EOM
 usage: nav to <shortcut>
 
@@ -63,9 +63,9 @@ Navigate to the directory under the provided shortcut.
 EOM
 }
 
-function __nav_cmd_help() {
+__nav_cmd_help() {
   local -r subcommand="$1"
-  if [[ -z "$subcommand" ]]; then
+  if [ -z "$subcommand" ]; then
     __nav_print_help
     return 1
   fi
@@ -93,13 +93,16 @@ function __nav_cmd_help() {
   esac
 }
 
-function __nav_cmd_list() {
+__nav_cmd_list() {
+  if [ ! -e "$NAV_PATH" ]; then
+    return 0
+  fi
   find "$NAV_PATH" -maxdepth 1 -type l \
     | xargs bash -c 'echo "$(basename "$1") -> $(realpath "$1")"' {} \
     | sort -n
 }
 
-function __nav_cmd_to() {
+__nav_cmd_to() {
   local -r shortcut="$1"
   if [[ -z "$shortcut" ]]; then
     echo "Please provide a shortcut."
@@ -118,7 +121,7 @@ function __nav_cmd_to() {
   cd "$dst"
 }
 
-function __nav_cmd_remove() {
+__nav_cmd_remove() {
   local -r shortcut="$1"
   if [[ -z "$shortcut" ]]; then
     echo "Please provide a shortcut."
@@ -139,12 +142,12 @@ function __nav_cmd_remove() {
   rm "$symlink"
 }
 
-function __nav_cmd_update() {
+__nav_cmd_update() {
   echo "not implemented"
   return 1
 }
 
-function __nav_cmd_add() {
+__nav_cmd_add() {
   local -r shortcut="$1"
   local -r directory="$2"
   if [[ -z "$shortcut" ]] || [[ -z "$directory" ]]; then
@@ -173,20 +176,20 @@ function __nav_cmd_add() {
 
   ln -s "$src" "$dst"
   local -r rv="$?"
-  if [[ $rv -ne 0 ]]; then
+  if [ $rv -ne 0 ]; then
     echo "Error: unable to add a shortcut from $shortcut to $directory."
     return 1
   fi
   echo "Added a shortcut from $shortcut to $src!"
 }
 
-function nav() {
-  if [[ -z "$NAV_PATH" ]]; then
+nav() {
+  if [ -z "$NAV_PATH" ]; then
     echo "Error: NAV_PATH is not set."
     return 1
   fi
   local -r subcommand="$1"
-  if [[ -z "$subcommand" ]]; then
+  if [ -z "$subcommand" ]; then
     __nav_print_help
     return 1
   fi
