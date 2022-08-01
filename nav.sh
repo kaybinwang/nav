@@ -97,24 +97,24 @@ __nav_cmd_list() {
   if [ ! -e "$NAV_PATH" ]; then
     return 0
   fi
-  find "$NAV_PATH" -maxdepth 1 -type l \
-    | xargs bash -c 'echo "$(basename "$1") -> $(realpath "$1")"' {} \
-    | sort -n
+  find "$NAV_PATH" -maxdepth 1 -type l | sort -n | while read -r shortcut; do
+    echo "$(basename "$1") -> $(realpath "$1")"
+  done
 }
 
 __nav_cmd_to() {
   local -r shortcut="$1"
-  if [[ -z "$shortcut" ]]; then
+  if [ -z "$shortcut" ]; then
     echo "Please provide a shortcut."
     __nav_print_help_to
     return 1
   fi
   local -r dst="$(realpath "$NAV_PATH/$shortcut")"
-  if [[ ! -e "$dst" ]]; then
+  if [ ! -e "$dst" ]; then
     echo "Shortcut '$shortcut' not found."
     return 1
   fi
-  if [[ ! -d "$dst" ]]; then
+  if [ ! -d "$dst" ]; then
     echo "Error: $dst is not a directory."
     return 1
   fi
@@ -123,18 +123,18 @@ __nav_cmd_to() {
 
 __nav_cmd_remove() {
   local -r shortcut="$1"
-  if [[ -z "$shortcut" ]]; then
+  if [ -z "$shortcut" ]; then
     echo "Please provide a shortcut."
     __nav_print_help_remove
     return 1
   fi
 
   local -r symlink="$NAV_PATH/$shortcut"
-  if [[ ! -e "$symlink" ]]; then
+  if [ ! -e "$symlink" ]; then
     echo "$shortcut is not a shortcut."
     return 1
   fi
-  if [[ ! -L "$symlink" ]]; then
+  if [ ! -L "$symlink" ]; then
     echo "Error: $symlink is not a symlink."
     return 1
   fi
@@ -150,24 +150,24 @@ __nav_cmd_update() {
 __nav_cmd_add() {
   local -r shortcut="$1"
   local -r directory="$2"
-  if [[ -z "$shortcut" ]] || [[ -z "$directory" ]]; then
+  if [ -z "$shortcut" ] || [ -z "$directory" ]; then
     echo "Please provide a shortcut and a directory."
     __nav_print_help_add
     return 1
   fi
 
   local -r src="$(realpath "$directory")"
-  if [[ $? -ne 0 ]]; then
+  if [ $? -ne 0 ]; then
     echo "Error: could not resolve the absolute path for $directory."
     return 1
   fi
-  if [[ ! -d "$src" ]]; then
+  if [ ! -d "$src" ]; then
     echo "Error: $directory is not a directory."
     return 1
   fi
 
   local -r dst="$NAV_PATH/$shortcut"
-  if [[ -e "$shortcut" ]]; then
+  if [ -e "$shortcut" ]; then
     echo "Error: $shortcut already exists."
     return 1
   fi
