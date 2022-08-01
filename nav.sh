@@ -1,3 +1,5 @@
+# shellcheck lang=sh
+
 if [[ -z "$NAV_PATH" ]]; then
   NAV_PATH="$HOME/.config/nav"
 fi
@@ -69,19 +71,19 @@ function __nav_cmd_help() {
   fi
   case "$subcommand" in
     add)
-      __nav_print_help_add ${@:2}
+      __nav_print_help_add "${@:2}"
       ;;
     update)
-      __nav_print_help_update ${@:2}
+      __nav_print_help_update "${@:2}"
       ;;
     remove)
-      __nav_print_help_remove ${@:2}
+      __nav_print_help_remove "${@:2}"
       ;;
     list)
-      __nav_print_help_list ${@:2}
+      __nav_print_help_list "${@:2}"
       ;;
     to)
-      __nav_print_help_to ${@:2}
+      __nav_print_help_to "${@:2}"
       ;;
     *)
       echo "Unrecognized command: $subcommand."
@@ -129,8 +131,8 @@ function __nav_cmd_remove() {
     echo "$shortcut is not a shortcut."
     return 1
   fi
-  if [[ ! -h "$symlink" ]]; then
-    echo "Error: "$symlink" is not a symlink."
+  if [[ ! -L "$symlink" ]]; then
+    echo "Error: $symlink is not a symlink."
     return 1
   fi
 
@@ -190,22 +192,22 @@ function nav() {
   fi
   case "$subcommand" in
     add)
-      __nav_cmd_add ${@:2}
+      __nav_cmd_add "${@:2}"
       ;;
     update)
-      __nav_cmd_update ${@:2}
+      __nav_cmd_update "${@:2}"
       ;;
     remove)
-      __nav_cmd_remove ${@:2}
+      __nav_cmd_remove "${@:2}"
       ;;
     list)
-      __nav_cmd_list ${@:2}
+      __nav_cmd_list "${@:2}"
       ;;
     to)
-      __nav_cmd_to ${@:2}
+      __nav_cmd_to "${@:2}"
       ;;
     help)
-      __nav_cmd_help ${@:2}
+      __nav_cmd_help "${@:2}"
       ;;
     *)
       echo "Unrecognized command: $subcommand."
