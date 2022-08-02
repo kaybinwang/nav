@@ -46,3 +46,19 @@ example,
 export NAV_PATH=/path/to/shortcuts
 source /path/to/nav.sh
 ```
+
+## Testing
+We use `shellspec` for testing. This is because it can execute the tests using
+`sh` instead of `bash` which gives us higher confidence in our portability.
+Furthermore, the framework lets us directly test shell functions instead of
+requiring executable scripts.
+
+You can execute the following command to run tests locally.
+```
+$ docker run -it --rm -v "$PWD:/src" shellspec/shellspec
+```
+
+### ARM Issues
+Note that `shellspec` currently doesn't have an ARM image which causes runtime
+errors when running the tests. This can be fixed by building the image from
+source directly.
