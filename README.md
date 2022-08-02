@@ -2,7 +2,7 @@
 Create shortcuts for navigating to specific directories.
 
 ## Dependencies
-This script requires `readlink` which is usually missing from MacOS.
+This script requires `realpath` which is usually missing from MacOS.
 
 ### Homebrew
 ```
