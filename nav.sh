@@ -64,26 +64,27 @@ EOM
 }
 
 __nav_cmd_help() {
-  local -r subcommand="$1"
+  subcommand="$1"
   if [ -z "$subcommand" ]; then
     __nav_print_help
     return 1
   fi
+  shift
   case "$subcommand" in
     add)
-      __nav_print_help_add "${@:2}"
+      __nav_print_help_add "$@"
       ;;
     update)
-      __nav_print_help_update "${@:2}"
+      __nav_print_help_update "$@"
       ;;
     remove)
-      __nav_print_help_remove "${@:2}"
+      __nav_print_help_remove "$@"
       ;;
     list)
-      __nav_print_help_list "${@:2}"
+      __nav_print_help_list "$@"
       ;;
     to)
-      __nav_print_help_to "${@:2}"
+      __nav_print_help_to "$@"
       ;;
     *)
       echo "Unrecognized command: $subcommand."
@@ -103,13 +104,13 @@ __nav_cmd_list() {
 }
 
 __nav_cmd_to() {
-  local -r shortcut="$1"
+  shortcut="$1"
   if [ -z "$shortcut" ]; then
     echo "Please provide a shortcut."
     __nav_print_help_to
     return 1
   fi
-  local -r dst="$(realpath "$NAV_PATH/$shortcut")"
+  dst="$(realpath "$NAV_PATH/$shortcut")"
   if [ ! -e "$dst" ]; then
     echo "Shortcut '$shortcut' not found."
     return 1
@@ -122,14 +123,14 @@ __nav_cmd_to() {
 }
 
 __nav_cmd_remove() {
-  local -r shortcut="$1"
+  shortcut="$1"
   if [ -z "$shortcut" ]; then
     echo "Please provide a shortcut."
     __nav_print_help_remove
     return 1
   fi
 
-  local -r symlink="$NAV_PATH/$shortcut"
+  symlink="$NAV_PATH/$shortcut"
   if [ ! -e "$symlink" ]; then
     echo "$shortcut is not a shortcut."
     return 1
@@ -148,15 +149,15 @@ __nav_cmd_update() {
 }
 
 __nav_cmd_add() {
-  local -r shortcut="$1"
-  local -r directory="$2"
+  shortcut="$1"
+  directory="$2"
   if [ -z "$shortcut" ] || [ -z "$directory" ]; then
     echo "Please provide a shortcut and a directory."
     __nav_print_help_add
     return 1
   fi
 
-  local -r src="$(realpath "$directory")"
+  src="$(realpath "$directory")"
   if [ $? -ne 0 ]; then
     echo "Error: could not resolve the absolute path for $directory."
     return 1
@@ -166,16 +167,16 @@ __nav_cmd_add() {
     return 1
   fi
 
-  local -r dst="$NAV_PATH/$shortcut"
+  dst="$NAV_PATH/$shortcut"
   if [ -e "$shortcut" ]; then
     echo "Error: $shortcut already exists."
     return 1
   fi
 
-  mkdir -p "$NAV_PATH" &>/dev/null
+  mkdir -p "$NAV_PATH" >/dev/null 2>&1
 
   ln -s "$src" "$dst"
-  local -r rv="$?"
+  rv="$?"
   if [ $rv -ne 0 ]; then
     echo "Error: unable to add a shortcut from $shortcut to $directory."
     return 1
@@ -188,29 +189,30 @@ nav() {
     echo "Error: NAV_PATH is not set."
     return 1
   fi
-  local -r subcommand="$1"
+  subcommand="$1"
   if [ -z "$subcommand" ]; then
     __nav_print_help
     return 1
   fi
+  shift
   case "$subcommand" in
     add)
-      __nav_cmd_add "${@:2}"
+      __nav_cmd_add "$@"
       ;;
     update)
-      __nav_cmd_update "${@:2}"
+      __nav_cmd_update "$@"
       ;;
     remove)
-      __nav_cmd_remove "${@:2}"
+      __nav_cmd_remove "$@"
       ;;
     list)
-      __nav_cmd_list "${@:2}"
+      __nav_cmd_list "$@"
       ;;
     to)
-      __nav_cmd_to "${@:2}"
+      __nav_cmd_to "$@"
       ;;
     help)
-      __nav_cmd_help "${@:2}"
+      __nav_cmd_help "$@"
       ;;
     *)
       echo "Unrecognized command: $subcommand."
