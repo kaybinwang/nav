@@ -53,9 +53,13 @@ We use `shellspec` for testing. This is because it can execute the tests using
 Furthermore, the framework lets us directly test shell functions instead of
 requiring executable scripts.
 
+We also run tests inside a docker container. This is because the tests have
+side-effects on the filesystem and we would like to isolate that from your
+system.
+
 You can execute the following command to run tests locally.
 ```
-$ docker run -it --rm -v "$PWD:/src" shellspec/shellspec
+$ make test
 ```
 
 ### ARM Issues
