@@ -56,8 +56,8 @@ Furthermore, the framework lets us directly test shell functions instead of
 requiring executable scripts.
 
 We also run tests inside a docker container. This is because the tests have
-side-effects on the filesystem and we would like to isolate that from your
-system.
+side-effects on the filesystem that we would like to isolate from our local
+machine.
 
 You can execute the following command to run tests locally.
 ```
