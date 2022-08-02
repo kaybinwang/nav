@@ -1,3 +1,5 @@
+![Build](https://github.com/kaybinwang/nav/actions/workflows/build.yml/badge.svg)
+
 # nav
 Create shortcuts for navigating to specific directories.
 
