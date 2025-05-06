@@ -168,7 +168,7 @@ __nav_cmd_add() {
   fi
 
   dst="$NAV_PATH/$shortcut"
-  if [ -e "$shortcut" ]; then
+  if [ -e "$dst" ]; then
     echo "Error: $shortcut already exists."
     return 1
   fi
